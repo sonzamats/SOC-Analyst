@@ -1,0 +1,4 @@
+# List of whitelisted IP addresses (one per line)
+# Add your trusted IPs below
+127.0.0.1
+192.168.1.1

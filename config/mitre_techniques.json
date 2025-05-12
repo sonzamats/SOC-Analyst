@@ -1,0 +1,166 @@
+{
+  "version": "10.1",
+  "last_updated": "2023-04-23",
+  "techniques": [
+    {
+      "technique_id": "T1059",
+      "name": "Command and Scripting Interpreter",
+      "description": "Adversaries may abuse command and script interpreters to execute commands, scripts, or binaries.",
+      "tactic": "Execution",
+      "tactic_id": "TA0002",
+      "platforms": ["Windows", "Linux", "macOS"],
+      "data_sources": ["Process monitoring", "Process command-line parameters", "Binary file metadata"],
+      "keywords": ["powershell", "cmd.exe", "command shell", "bash", "python", "perl", "vbscript", "javascript", "wscript", "cscript"]
+    },
+    {
+      "technique_id": "T1547",
+      "name": "Boot or Logon Autostart Execution",
+      "description": "Adversaries may configure system settings to automatically execute a program during system boot or logon to maintain persistence.",
+      "tactic": "Persistence",
+      "tactic_id": "TA0003",
+      "platforms": ["Windows", "Linux", "macOS"],
+      "data_sources": ["Windows Registry", "File monitoring", "Process monitoring"],
+      "keywords": ["registry run keys", "startup folder", "login items", "rc.common", "launchd", "cron", "systemd"]
+    },
+    {
+      "technique_id": "T1113",
+      "name": "Screen Capture",
+      "description": "Adversaries may attempt to take screen captures of the desktop to gather information over the course of an operation.",
+      "tactic": "Collection",
+      "tactic_id": "TA0009",
+      "platforms": ["Windows", "Linux", "macOS"],
+      "data_sources": ["Process monitoring", "API monitoring", "Image/Screen capture"],
+      "keywords": ["screenshot", "screen capture", "screengrab", "PrintWindow API", "xwd"]
+    },
+    {
+      "technique_id": "T1082",
+      "name": "System Information Discovery",
+      "description": "Adversaries may attempt to get detailed information about the operating system and hardware.",
+      "tactic": "Discovery",
+      "tactic_id": "TA0007",
+      "platforms": ["Windows", "Linux", "macOS"],
+      "data_sources": ["Process monitoring", "Command-line parameters"],
+      "keywords": ["systeminfo", "hostname", "ver", "uname", "system_profiler", "hostnamectl"]
+    },
+    {
+      "technique_id": "T1555",
+      "name": "Credentials from Password Stores",
+      "description": "Adversaries may search for common password storage locations to obtain user credentials.",
+      "tactic": "Credential Access",
+      "tactic_id": "TA0006",
+      "platforms": ["Windows", "Linux", "macOS"],
+      "data_sources": ["Process monitoring", "File access monitoring"],
+      "keywords": ["password manager", "keychain", "credential manager", "keepass", "browser passwords", "mimikatz", "lazagne"]
+    },
+    {
+      "technique_id": "T1078",
+      "name": "Valid Accounts",
+      "description": "Adversaries may steal or forge valid credentials to circumvent access controls.",
+      "tactic": "Defense Evasion",
+      "tactic_id": "TA0005",
+      "platforms": ["Windows", "Linux", "macOS", "Cloud"],
+      "data_sources": ["Authentication logs", "Account monitoring"],
+      "keywords": ["credential theft", "account compromise", "administrative accounts", "domain accounts", "local accounts", "cloud accounts"]
+    },
+    {
+      "technique_id": "T1110",
+      "name": "Brute Force",
+      "description": "Adversaries may use brute force techniques to gain access to accounts when passwords are unknown or changed.",
+      "tactic": "Credential Access",
+      "tactic_id": "TA0006",
+      "platforms": ["Windows", "Linux", "macOS", "Cloud"],
+      "data_sources": ["Authentication logs", "Network traffic", "Account monitoring"],
+      "keywords": ["password spray", "password guessing", "credential stuffing", "authentication failures", "account lockouts"]
+    },
+    {
+      "technique_id": "T1048",
+      "name": "Exfiltration Over Alternative Protocol",
+      "description": "Adversaries may steal data by exfiltrating it over a different protocol than that of the existing command and control channel.",
+      "tactic": "Exfiltration",
+      "tactic_id": "TA0010",
+      "platforms": ["Windows", "Linux", "macOS"],
+      "data_sources": ["Network traffic", "Packet capture", "Netflow/Enclave netflow", "Process monitoring"],
+      "keywords": ["dns exfiltration", "dns tunneling", "icmp exfiltration", "ftp exfiltration", "smtp exfiltration", "https exfiltration", "exfiltration over c2", "data encoding"]
+    },
+    {
+      "technique_id": "T1021",
+      "name": "Remote Services",
+      "description": "Adversaries may use remote services to access and persist within a system.",
+      "tactic": "Lateral Movement",
+      "tactic_id": "TA0008",
+      "platforms": ["Windows", "Linux", "macOS"],
+      "data_sources": ["Authentication logs", "Network traffic", "Process monitoring"],
+      "keywords": ["rdp", "remote desktop", "ssh", "telnet", "vnc", "teamviewer", "remote powershell", "wmi", "winrm", "psexec"]
+    },
+    {
+      "technique_id": "T1071",
+      "name": "Application Layer Protocol",
+      "description": "Adversaries may communicate using application layer protocols to avoid detection/network filtering.",
+      "tactic": "Command and Control",
+      "tactic_id": "TA0011",
+      "platforms": ["Windows", "Linux", "macOS", "Cloud"],
+      "data_sources": ["Network traffic", "Packet capture", "Netflow/Enclave netflow", "Process monitoring"],
+      "keywords": ["http c2", "https c2", "dns c2", "webdav", "web socket", "slack c2", "irc c2", "smtp c2"]
+    },
+    {
+      "technique_id": "T1053",
+      "name": "Scheduled Task/Job",
+      "description": "Adversaries may abuse task scheduling functionality to facilitate initial or recurring execution of malicious code.",
+      "tactic": "Execution",
+      "tactic_id": "TA0002",
+      "platforms": ["Windows", "Linux", "macOS", "Cloud"],
+      "data_sources": ["Process monitoring", "File monitoring", "Scheduled job/task monitoring"],
+      "keywords": ["scheduled tasks", "at", "schtasks", "cron", "launchd", "systemd timers", "windows task scheduler"]
+    },
+    {
+      "technique_id": "T1027",
+      "name": "Obfuscated Files or Information",
+      "description": "Adversaries may use obfuscated files or information to hide artifacts from analysis.",
+      "tactic": "Defense Evasion",
+      "tactic_id": "TA0005",
+      "platforms": ["Windows", "Linux", "macOS"],
+      "data_sources": ["Process monitoring", "File monitoring", "Binary file analysis"],
+      "keywords": ["encoding", "encryption", "base64", "xor", "powershell obfuscation", "script obfuscation", "payload obfuscation"]
+    },
+    {
+      "technique_id": "T1036",
+      "name": "Masquerading",
+      "description": "Adversaries may attempt to manipulate features of their artifacts to disguise them.",
+      "tactic": "Defense Evasion",
+      "tactic_id": "TA0005",
+      "platforms": ["Windows", "Linux", "macOS"],
+      "data_sources": ["Process monitoring", "File monitoring", "Binary file metadata"],
+      "keywords": ["file name spoofing", "right-to-left override", "masquerading", "executable renamed", "suspicious extensions", "double extensions"]
+    },
+    {
+      "technique_id": "T1057",
+      "name": "Process Discovery",
+      "description": "Adversaries may attempt to get information about running processes on a system.",
+      "tactic": "Discovery",
+      "tactic_id": "TA0007",
+      "platforms": ["Windows", "Linux", "macOS"],
+      "data_sources": ["Process monitoring", "Process command-line parameters"],
+      "keywords": ["tasklist", "ps", "process list", "wmic process", "get-process"]
+    },
+    {
+      "technique_id": "T1083",
+      "name": "File and Directory Discovery",
+      "description": "Adversaries may enumerate files and directories to learn about the system.",
+      "tactic": "Discovery",
+      "tactic_id": "TA0007",
+      "platforms": ["Windows", "Linux", "macOS"],
+      "data_sources": ["Process monitoring", "File access monitoring", "Command-line parameters"],
+      "keywords": ["dir", "ls", "find", "locate", "file listing", "directory listing", "get-childitem"]
+    },
+    {
+      "technique_id": "T1070",
+      "name": "Indicator Removal on Host",
+      "description": "Adversaries may delete or modify artifacts generated on a system to hide their presence.",
+      "tactic": "Defense Evasion",
+      "tactic_id": "TA0005",
+      "platforms": ["Windows", "Linux", "macOS"],
+      "data_sources": ["Process monitoring", "File monitoring", "Log data"],
+      "keywords": ["clear logs", "delete logs", "clear history", "timestomp", "log clearing", "web shell backdoors"]
+    }
+  ]
+} 

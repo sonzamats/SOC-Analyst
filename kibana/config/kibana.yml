@@ -1,0 +1,45 @@
+---
+server.name: kibana
+server.host: "0"
+
+# Elasticsearch connection
+elasticsearch.hosts: ["http://elasticsearch:9200"]
+elasticsearch.username: elastic
+elasticsearch.password: changeme
+
+# SSL settings are commented out for dev, but should be enabled for production
+#server.ssl.enabled: true
+#server.ssl.certificate: /path/to/your/certificate.crt
+#server.ssl.key: /path/to/your/key.key
+
+# Security settings
+xpack.security.enabled: true
+
+# Monitoring settings
+monitoring.ui.container.elasticsearch.enabled: true
+
+# Disable features requiring encryption keys
+xpack.reporting.enabled: false
+xpack.encryptedSavedObjects.enabled: false
+
+# Set a higher timeout for the SIEM components
+elasticsearch.requestTimeout: 90000
+
+# Default dashboard settings
+kibana.defaultAppId: "dashboards"
+
+# Allow field mappings to be customized
+xpack.maps.showMapVisualizationTypes: true
+
+# Performance settings
+optimize.useBundleCache: true
+optimize.watch: false
+
+# Logging settings
+logging.dest: stdout
+logging.silent: false
+logging.quiet: false
+logging.verbose: false
+
+# Security dashboard enhancement
+xpack.securitySolution.enabled: true 

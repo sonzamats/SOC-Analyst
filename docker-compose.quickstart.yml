@@ -1,0 +1,226 @@
+version: '3.8'
+
+services:
+  # Elasticsearch - Core data store for logs and events
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.16.2
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - ES_JAVA_OPTS=-Xms1g -Xmx1g
+      - xpack.security.enabled=true
+      - ELASTIC_PASSWORD=changeme
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+      - ./config/elasticsearch/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    ports:
+      - "9200:9200"
+    networks:
+      - siem_network
+    restart: unless-stopped
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+
+  # Kibana - Visualization and dashboard platform
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.16.2
+    container_name: kibana
+    depends_on:
+      - elasticsearch
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=changeme
+    volumes:
+      - ./config/kibana/kibana.yml:/usr/share/kibana/config/kibana.yml
+    ports:
+      - "5601:5601"
+    networks:
+      - siem_network
+    restart: unless-stopped
+
+  # Logstash - Log processing pipeline
+  logstash:
+    image: docker.elastic.co/logstash/logstash:7.16.2
+    container_name: logstash
+    depends_on:
+      - elasticsearch
+    volumes:
+      - ./config/logstash/logstash.yml:/usr/share/logstash/config/logstash.yml
+      - ./config/logstash/pipelines.yml:/usr/share/logstash/config/pipelines.yml
+      - ./config/logstash/pipeline:/usr/share/logstash/pipeline
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=changeme
+      - LS_JAVA_OPTS=-Xms512m -Xmx512m
+    ports:
+      - "5044:5044"
+      - "5045:5045"
+      - "9600:9600"
+    networks:
+      - siem_network
+    restart: unless-stopped
+
+  # Filebeat - Log collector for file-based logs
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:7.16.2
+    container_name: filebeat
+    volumes:
+      - ./config/filebeat/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/log:/var/log:ro
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=changeme
+    user: root
+    networks:
+      - siem_network
+    depends_on:
+      - elasticsearch
+      - logstash
+    restart: unless-stopped
+
+  # Wazuh Manager - Security monitoring solution
+  wazuh-manager:
+    image: wazuh/wazuh-manager:4.3.0
+    container_name: wazuh-manager
+    hostname: wazuh-manager
+    volumes:
+      - wazuh_api_configuration:/var/ossec/api/configuration
+      - wazuh_etc:/var/ossec/etc
+      - wazuh_logs:/var/ossec/logs
+      - wazuh_queue:/var/ossec/queue
+      - wazuh_var_multigroups:/var/ossec/var/multigroups
+      - wazuh_integrations:/var/ossec/integrations
+      - wazuh_active_response:/var/ossec/active-response/bin
+      - wazuh_agentless:/var/ossec/agentless
+      - wazuh_wodles:/var/ossec/wodles
+      - ./config/wazuh/ossec.conf:/var/ossec/etc/ossec.conf
+    ports:
+      - "1514:1514/udp"
+      - "1515:1515"
+      - "514:514/udp"
+      - "55000:55000"
+    networks:
+      - siem_network
+    restart: unless-stopped
+
+  # Wazuh Dashboard - Web UI for Wazuh
+  wazuh-dashboard:
+    image: wazuh/wazuh-dashboard:4.3.0
+    container_name: wazuh-dashboard
+    depends_on:
+      - wazuh-manager
+    ports:
+      - "443:443"
+    environment:
+      - ELASTICSEARCH_URL=https://elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=changeme
+    networks:
+      - siem_network
+    restart: unless-stopped
+
+  # TheHive - Security incident response platform
+  thehive:
+    image: thehiveproject/thehive4:4.1.18
+    container_name: thehive
+    depends_on:
+      - elasticsearch
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=changeme
+    volumes:
+      - thehive_data:/opt/thehive/data
+      - ./config/thehive/application.conf:/opt/thehive/conf/application.conf
+    ports:
+      - "9000:9000"
+    networks:
+      - siem_network
+    restart: unless-stopped
+
+  # Cortex - Observable analysis and response engine
+  cortex:
+    image: thehiveproject/cortex:3.1.1
+    container_name: cortex
+    volumes:
+      - cortex_data:/opt/cortex/data
+      - ./config/cortex/application.conf:/opt/cortex/conf/application.conf
+    ports:
+      - "9001:9001"
+    networks:
+      - siem_network
+    restart: unless-stopped
+
+  # Shuffle - Security orchestration and automation
+  shuffle:
+    image: ghcr.io/shuffle/shuffle:latest
+    container_name: shuffle
+    hostname: shuffle
+    ports:
+      - "3001:3001"
+    volumes:
+      - shuffle_data:/shuffle
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - siem_network
+    restart: unless-stopped
+
+  # Zeek - Network security monitoring
+  zeek:
+    image: blacktop/zeek:4.0
+    container_name: zeek
+    network_mode: host
+    volumes:
+      - zeek_logs:/pcap
+      - /etc/localtime:/etc/localtime:ro
+    cap_add:
+      - NET_RAW
+      - NET_ADMIN
+    restart: unless-stopped
+
+  # Suricata - Network threat detection
+  suricata:
+    image: jasonish/suricata:latest
+    container_name: suricata
+    network_mode: host
+    volumes:
+      - suricata_logs:/var/log/suricata
+      - suricata_rules:/etc/suricata/rules
+    cap_add:
+      - NET_ADMIN
+      - SYS_NICE
+      - NET_RAW
+    environment:
+      - SURICATA_OPTIONS=-i eth0
+    restart: unless-stopped
+
+networks:
+  siem_network:
+    driver: bridge
+
+volumes:
+  es_data:
+  wazuh_api_configuration:
+  wazuh_etc:
+  wazuh_logs:
+  wazuh_queue:
+  wazuh_var_multigroups:
+  wazuh_integrations:
+  wazuh_active_response:
+  wazuh_agentless:
+  wazuh_wodles:
+  thehive_data:
+  cortex_data:
+  shuffle_data:
+  zeek_logs:
+  suricata_logs:
+  suricata_rules:

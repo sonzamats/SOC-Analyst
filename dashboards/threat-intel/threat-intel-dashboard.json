@@ -1,0 +1,59 @@
+{
+  "id": "threat-intel-dashboard",
+  "type": "dashboard",
+  "attributes": {
+    "title": "Threat Intelligence Overview",
+    "hits": 0,
+    "description": "Dashboard for monitoring threat intelligence matches and indicators across the environment",
+    "panelsJSON": "[{\"version\":\"7.14.0\",\"gridData\":{\"x\":0,\"y\":0,\"w\":24,\"h\":15,\"i\":\"1\"},\"panelIndex\":\"1\",\"embeddableConfig\":{\"title\":\"Threat Intelligence Matches Over Time\"},\"panelRefName\":\"panel_0\"},{\"version\":\"7.14.0\",\"gridData\":{\"x\":24,\"y\":0,\"w\":24,\"h\":15,\"i\":\"2\"},\"panelIndex\":\"2\",\"embeddableConfig\":{\"title\":\"Top Threat Sources\"},\"panelRefName\":\"panel_1\"},{\"version\":\"7.14.0\",\"gridData\":{\"x\":0,\"y\":15,\"w\":12,\"h\":15,\"i\":\"3\"},\"panelIndex\":\"3\",\"embeddableConfig\":{\"title\":\"Indicator Types\"},\"panelRefName\":\"panel_2\"},{\"version\":\"7.14.0\",\"gridData\":{\"x\":12,\"y\":15,\"w\":36,\"h\":15,\"i\":\"4\"},\"panelIndex\":\"4\",\"embeddableConfig\":{\"title\":\"Recent Threat Intel Matches\"},\"panelRefName\":\"panel_3\"},{\"version\":\"7.14.0\",\"gridData\":{\"x\":0,\"y\":30,\"w\":48,\"h\":15,\"i\":\"5\"},\"panelIndex\":\"5\",\"embeddableConfig\":{\"title\":\"Geographic Distribution of Threats\"},\"panelRefName\":\"panel_4\"},{\"version\":\"7.14.0\",\"gridData\":{\"x\":0,\"y\":45,\"w\":24,\"h\":15,\"i\":\"6\"},\"panelIndex\":\"6\",\"embeddableConfig\":{\"title\":\"MITRE ATT&CK Technique Distribution\"},\"panelRefName\":\"panel_5\"},{\"version\":\"7.14.0\",\"gridData\":{\"x\":24,\"y\":45,\"w\":24,\"h\":15,\"i\":\"7\"},\"panelIndex\":\"7\",\"embeddableConfig\":{\"title\":\"Feed Source Distribution\"},\"panelRefName\":\"panel_6\"}]",
+    "optionsJSON": "{\"hidePanelTitles\":false,\"useMargins\":true}",
+    "version": 1,
+    "timeRestore": true,
+    "timeTo": "now",
+    "timeFrom": "now-24h",
+    "refreshInterval": {
+      "pause": false,
+      "value": 300000
+    },
+    "kibanaSavedObjectMeta": {
+      "searchSourceJSON": "{\"query\":{\"language\":\"kuery\",\"query\":\"tags:threat_intel_match\"},\"filter\":[]}"
+    }
+  },
+  "references": [
+    {
+      "id": "threat-intel-matches-timechart",
+      "name": "panel_0",
+      "type": "visualization"
+    },
+    {
+      "id": "top-threat-sources-pie",
+      "name": "panel_1",
+      "type": "visualization"
+    },
+    {
+      "id": "indicator-types-pie",
+      "name": "panel_2",
+      "type": "visualization"
+    },
+    {
+      "id": "recent-threat-matches-table",
+      "name": "panel_3",
+      "type": "search"
+    },
+    {
+      "id": "threat-geo-map",
+      "name": "panel_4",
+      "type": "map"
+    },
+    {
+      "id": "mitre-technique-distribution",
+      "name": "panel_5",
+      "type": "visualization"
+    },
+    {
+      "id": "ti-feed-source-pie",
+      "name": "panel_6",
+      "type": "visualization"
+    }
+  ]
+} 

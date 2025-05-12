@@ -1,0 +1,10 @@
+2025-05-12T12:00:00Z INFO User login successful for user: admin from IP: 192.168.1.100
+2025-05-12T12:01:30Z INFO File access: /etc/passwd by user: admin from IP: 192.168.1.100
+2025-05-12T12:02:45Z WARNING Failed login attempt for user: root from IP: 10.0.0.22
+2025-05-12T12:03:15Z ERROR Security policy violation: Port scan detected from IP: 10.0.0.22
+2025-05-12T12:05:00Z WARNING Multiple authentication failures from IP: 10.0.0.22
+2025-05-12T12:10:00Z CRITICAL Possible brute force attack detected from IP: 10.0.0.22
+2025-05-12T12:15:00Z INFO System update initiated by user: admin
+2025-05-12T12:20:00Z INFO User logout: admin
+2025-05-12T12:30:00Z WARNING Unusual file access pattern detected: user admin accessing multiple sensitive files
+2025-05-12T12:45:00Z ERROR Firewall breach attempt detected from IP: 172.16.0.5 

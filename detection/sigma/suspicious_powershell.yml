@@ -1,0 +1,41 @@
+title: Suspicious PowerShell Execution with Encoded Command
+id: 8ea8a3ef-e46c-4452-a66a-49bb7d48871a
+status: stable
+description: Detects suspicious PowerShell execution with encoded commands, which is commonly used by malware to evade detection
+references:
+    - https://attack.mitre.org/techniques/T1059/001/
+author: SOC Analyst SIEM Project
+date: 2023/01/15
+modified: 2023/06/30
+tags:
+    - attack.execution
+    - attack.t1059.001
+logsource:
+    category: process_creation
+    product: windows
+detection:
+    selection:
+        CommandLine|contains|all:
+            - 'powershell'
+            - '-e'
+        - CommandLine|contains|all:
+            - 'powershell'
+            - '-enc'
+        - CommandLine|contains|all:
+            - 'powershell'
+            - '-encodedcommand'
+    filter:
+        CommandLine|contains:
+            - 'SCCM'
+            - 'Configuration Manager'
+            - 'Monitoring Agent'
+    condition: selection and not filter
+falsepositives:
+    - Administrative scripts using encoded commands for legitimate purposes
+    - Some security tools and monitoring agents
+level: medium
+mitre:
+    tactic:
+        - TA0002
+    technique:
+        - T1059.001

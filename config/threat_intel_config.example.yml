@@ -1,0 +1,88 @@
+# Threat Intelligence Collector Configuration
+# This is an example configuration file for the threat intel collector
+# Copy this file to threat_intel_config.yml and modify as needed
+
+# Elasticsearch connection settings
+elasticsearch:
+  hosts: ["http://elasticsearch:9200"]
+  username: "elastic"
+  password: "${ELASTIC_PASSWORD:changeme}"
+  verify_certs: false
+
+# Global settings
+settings:
+  update_interval: 3600  # Update interval in seconds (1 hour)
+  max_indicators_per_run: 10000
+  log_level: "info"
+  output_format: "elastic"  # Options: elastic, file, stdout
+  output_path: "/logs/threat_intel"
+  user_agent: "SOC-SIEM-ThreatIntelCollector/1.0"
+
+# Threat intelligence sources
+sources:
+  - name: "AlienVault OTX"
+    type: "otx"
+    enabled: true
+    api_key: "${OTX_API_KEY:}"
+    pulse_age_days: 30
+    confidence_level: "high"
+    indicator_types:
+      - "domain"
+      - "hostname"
+      - "ipv4"
+      - "ipv6"
+      - "file_hash"
+      - "url"
+    index: "threat-intel-otx"
+
+  - name: "MISP"
+    type: "misp"
+    enabled: false
+    url: "https://misp.example.org"
+    api_key: "${MISP_API_KEY:}"
+    verify_ssl: false
+    event_age_days: 30
+    publish_only: true
+    confidence_level: "high"
+    index: "threat-intel-misp"
+
+  - name: "AbuseCH MalwareBazaar"
+    type: "malwarebazaar"
+    enabled: true
+    url: "https://mb-api.abuse.ch/api/v1/"
+    query_age_days: 30
+    confidence_level: "high"
+    index: "threat-intel-malwarebazaar"
+
+  - name: "SANS Internet Storm Center"
+    type: "csv"
+    enabled: true
+    url: "https://isc.sans.edu/api/threatlist/shodan/csv"
+    headers:
+      User-Agent: "SOC-SIEM-ThreatIntelCollector/1.0"
+    field_mapping:
+      ip: "indicator"
+      attacks: "description"
+    update_interval: 86400  # 24 hours
+    confidence_level: "medium"
+    indicator_type: "ipv4"
+    index: "threat-intel-sans-isc"
+
+  - name: "PhishTank"
+    type: "phishtank"
+    enabled: true
+    url: "http://data.phishtank.com/data/online-valid.json"
+    confidence_level: "high"
+    index: "threat-intel-phishtank"
+
+# Indicator whitelists to prevent false positives
+whitelists:
+  ipv4:
+    file: "/config/whitelists/ip_whitelist.txt"
+    enabled: true
+  domain:
+    file: "/config/whitelists/domain_whitelist.txt"
+    enabled: true
+  hash:
+    file: "/config/whitelists/hash_whitelist.txt"
+    enabled: true 

@@ -1,0 +1,4 @@
+# List of whitelisted domains (one per line)
+# Add your trusted domains below
+google.com
+microsoft.com

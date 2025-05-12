@@ -1,0 +1,69 @@
+{
+  "id": "lateral-movement-dashboard",
+  "type": "dashboard",
+  "attributes": {
+    "title": "Lateral Movement Detection",
+    "hits": 0,
+    "description": "Dashboard for monitoring and detecting lateral movement across the network",
+    "panelsJSON": "[{\"version\":\"7.14.0\",\"gridData\":{\"x\":0,\"y\":0,\"w\":48,\"h\":7,\"i\":\"1\"},\"panelIndex\":\"1\",\"embeddableConfig\":{\"title\":\"Lateral Movement Alerts\"},\"panelRefName\":\"panel_0\"},{\"version\":\"7.14.0\",\"gridData\":{\"x\":0,\"y\":7,\"w\":24,\"h\":15,\"i\":\"2\"},\"panelIndex\":\"2\",\"embeddableConfig\":{\"title\":\"Authentication Anomalies Over Time\"},\"panelRefName\":\"panel_1\"},{\"version\":\"7.14.0\",\"gridData\":{\"x\":24,\"y\":7,\"w\":24,\"h\":15,\"i\":\"3\"},\"panelIndex\":\"3\",\"embeddableConfig\":{\"title\":\"Administrative Tool Usage\"},\"panelRefName\":\"panel_2\"},{\"version\":\"7.14.0\",\"gridData\":{\"x\":0,\"y\":22,\"w\":24,\"h\":15,\"i\":\"4\"},\"panelIndex\":\"4\",\"embeddableConfig\":{\"title\":\"Host Connection Patterns\"},\"panelRefName\":\"panel_3\"},{\"version\":\"7.14.0\",\"gridData\":{\"x\":24,\"y\":22,\"w\":24,\"h\":15,\"i\":\"5\"},\"panelIndex\":\"5\",\"embeddableConfig\":{\"title\":\"RDP/SSH/WinRM Connections\"},\"panelRefName\":\"panel_4\"},{\"version\":\"7.14.0\",\"gridData\":{\"x\":0,\"y\":37,\"w\":48,\"h\":20,\"i\":\"6\"},\"panelIndex\":\"6\",\"embeddableConfig\":{\"title\":\"Network Flow Visualization\"},\"panelRefName\":\"panel_5\"},{\"version\":\"7.14.0\",\"gridData\":{\"x\":0,\"y\":57,\"w\":24,\"h\":15,\"i\":\"7\"},\"panelIndex\":\"7\",\"embeddableConfig\":{\"title\":\"Top Source Hosts\"},\"panelRefName\":\"panel_6\"},{\"version\":\"7.14.0\",\"gridData\":{\"x\":24,\"y\":57,\"w\":24,\"h\":15,\"i\":\"8\"},\"panelIndex\":\"8\",\"embeddableConfig\":{\"title\":\"Top Target Hosts\"},\"panelRefName\":\"panel_7\"},{\"version\":\"7.14.0\",\"gridData\":{\"x\":0,\"y\":72,\"w\":48,\"h\":15,\"i\":\"9\"},\"panelIndex\":\"9\",\"embeddableConfig\":{\"title\":\"Recent Lateral Movement Events\"},\"panelRefName\":\"panel_8\"}]",
+    "optionsJSON": "{\"hidePanelTitles\":false,\"useMargins\":true}",
+    "version": 1,
+    "timeRestore": true,
+    "timeTo": "now",
+    "timeFrom": "now-24h",
+    "refreshInterval": {
+      "pause": false,
+      "value": 300000
+    },
+    "kibanaSavedObjectMeta": {
+      "searchSourceJSON": "{\"query\":{\"language\":\"kuery\",\"query\":\"event_category:lateral_movement OR tags:lateral_movement_indicator\"},\"filter\":[]}"
+    }
+  },
+  "references": [
+    {
+      "id": "lateral-movement-alerts-stats",
+      "name": "panel_0",
+      "type": "visualization"
+    },
+    {
+      "id": "auth-anomalies-timechart",
+      "name": "panel_1",
+      "type": "visualization"
+    },
+    {
+      "id": "admin-tool-usage-barchart",
+      "name": "panel_2",
+      "type": "visualization"
+    },
+    {
+      "id": "host-connection-heatmap",
+      "name": "panel_3",
+      "type": "visualization"
+    },
+    {
+      "id": "remote-access-protocols-barchart",
+      "name": "panel_4",
+      "type": "visualization"
+    },
+    {
+      "id": "network-flows-graph",
+      "name": "panel_5",
+      "type": "visualization"
+    },
+    {
+      "id": "top-source-hosts-table",
+      "name": "panel_6",
+      "type": "visualization"
+    },
+    {
+      "id": "top-target-hosts-table",
+      "name": "panel_7",
+      "type": "visualization"
+    },
+    {
+      "id": "recent-lateral-movement-events",
+      "name": "panel_8",
+      "type": "search"
+    }
+  ]
+}

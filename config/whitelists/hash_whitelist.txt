@@ -1,0 +1,2 @@
+# List of whitelisted file hashes (one per line)
+# Add your trusted file hashes below

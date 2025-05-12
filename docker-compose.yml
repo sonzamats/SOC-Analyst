@@ -1,0 +1,96 @@
+version: '3.8'
+
+services:
+  # Elasticsearch for data storage and searching
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.14.0
+    container_name: soc-elasticsearch
+    environment:
+      - node.name=es01
+      - cluster.name=es-soc-cluster
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+      - ELASTIC_PASSWORD=changeme
+      - xpack.security.enabled=true
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - elasticsearch-data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+    networks:
+      - soc-network
+    restart: unless-stopped
+
+  # Kibana for data visualization and dashboards
+  kibana:
+    image: docker.elastic.co/kibana/kibana:7.14.0
+    container_name: soc-kibana
+    depends_on:
+      - elasticsearch
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - ELASTICSEARCH_USERNAME=elastic
+      - ELASTICSEARCH_PASSWORD=changeme
+    volumes:
+      - ./kibana/config/kibana.yml:/usr/share/kibana/config/kibana.yml
+    ports:
+      - "5601:5601"
+    networks:
+      - soc-network
+    restart: unless-stopped
+    
+  # Logstash for log processing and enrichment
+  logstash:
+    image: docker.elastic.co/logstash/logstash:7.14.0
+    container_name: soc-logstash
+    depends_on:
+      - elasticsearch
+    environment:
+      - ELASTIC_PASSWORD=changeme
+      - xpack.monitoring.elasticsearch.hosts=http://elasticsearch:9200
+      - xpack.monitoring.elasticsearch.username=elastic
+      - xpack.monitoring.elasticsearch.password=changeme
+    volumes:
+      - ./logstash/config/logstash.yml:/usr/share/logstash/config/logstash.yml
+      - ./logstash/pipeline:/usr/share/logstash/pipeline
+    ports:
+      - "5044:5044"
+      - "9600:9600"
+    networks:
+      - soc-network
+    restart: unless-stopped
+
+  # Filebeat for log collection
+  filebeat:
+    image: docker.elastic.co/beats/filebeat:7.14.0
+    container_name: soc-filebeat
+    depends_on:
+      - elasticsearch
+      - logstash
+    user: root
+    environment:
+      - ELASTIC_PASSWORD=changeme
+      - setup.kibana.host=kibana:5601
+      - output.elasticsearch.hosts=["elasticsearch:9200"]
+      - output.elasticsearch.username=elastic
+      - output.elasticsearch.password=changeme
+    volumes:
+      - ./filebeat/config/filebeat.yml:/usr/share/filebeat/filebeat.yml:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./logs:/logs:ro
+    networks:
+      - soc-network
+    restart: unless-stopped
+    command: filebeat -e -strict.perms=false
+
+networks:
+  soc-network:
+    driver: bridge
+
+volumes:
+  elasticsearch-data: 

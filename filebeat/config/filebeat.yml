@@ -1,0 +1,88 @@
+filebeat.inputs:
+- type: log
+  enabled: true
+  paths:
+    - /logs/*.log
+    - /logs/*/*.log
+  exclude_files: ['.gz$']
+  tags: ["logfiles"]
+  fields:
+    source_type: file
+  fields_under_root: true
+
+- type: container
+  enabled: true
+  paths:
+    - /var/lib/docker/containers/*/*.log
+  exclude_files: ['.gz$']
+  tags: ["docker"]
+  fields:
+    source_type: docker
+  fields_under_root: true
+
+# Module configuration for system logs
+filebeat.modules:
+  - module: system
+    syslog:
+      enabled: true
+    auth:
+      enabled: true
+  
+  - module: auditd
+    log:
+      enabled: true
+
+processors:
+  - add_host_metadata: ~
+  - add_cloud_metadata: ~
+  - add_docker_metadata: ~
+  - add_kubernetes_metadata: ~
+  
+  # Add timestamp processing
+  - timestamp:
+      field: event.created
+      target_field: event.created
+      layouts:
+        - '2006-01-02T15:04:05.999Z'
+        - '2006-01-02T15:04:05Z'
+        - '2006-01-02 15:04:05,999'
+  
+  # Add security-relevant tags
+  - add_tags:
+      tags: ["soc-siem"]
+      target: tags
+  
+  # Rename fields to conform to ECS
+  - rename:
+      fields:
+        - from: "message"
+          to: "event.original"
+      ignore_missing: true
+      fail_on_error: false
+  
+  # Drop fields that are not useful for security monitoring
+  - drop_fields:
+      fields: ["agent.ephemeral_id", "ecs.version", "input.type"]
+      ignore_missing: true
+
+# Send logs to logstash for processing
+output.logstash:
+  hosts: ["logstash:5044"]
+  ssl.enabled: false
+
+# Elasticsearch monitoring
+monitoring:
+  enabled: true
+  elasticsearch:
+    hosts: ["http://elasticsearch:9200"]
+    username: elastic
+    password: changeme
+
+# Logging settings
+logging.level: info
+logging.to_files: true
+logging.files:
+  path: /var/log/filebeat
+  name: filebeat
+  keepfiles: 7
+  permissions: 0644 

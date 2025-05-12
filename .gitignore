@@ -1,0 +1,19 @@
+# Elasticsearch data
+elasticsearch-data/
+
+# Logs (except sample logs)
+logs/*.log
+!logs/sample.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Docker volumes
+data/
+
+# Editor files
+.idea/
+.vscode/
+*.swp
+*.swo 
